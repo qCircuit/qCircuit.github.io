@@ -25,7 +25,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
         <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
         <meta name="generator" content="Hugo 0.96.0" />
     </head>
     <body>
@@ -85,29 +85,30 @@ def get_moving_average(self):
                 <img src="../images/fintech_moving_average.png" alt="extrema" width="800px" height="300px">
                 <p>The Stochastic Oscillator is a popular momentum indicator used in technical analysis to assess the price momentum of a financial instrument, such as a stock, currency pair, or commodity. It helps traders and investors identify potential overbought and oversold conditions in the market, indicating possible trend reversals or corrections.
                 </p>
+                <h2>Stochastic Oscillator Formula:</h2>
                 <p>
-                    The Stochastic Oscillator formula is given by:
-                    <br>
-                    <div id="stochasticFormula">
-                      \( %K = \frac{{C - L_{n}}}{{H_{n} - L_{n}}} \times 100 \)
-                    </div>
-                  </p>
-                  
-                  <h3>Where:</h3>
-                  <ul>
-                    <li>
-                      \( %K \) is the value of the Stochastic Oscillator at a given time.
-                    </li>
-                    <li>
-                      \( C \) is the most recent closing price of the asset.
-                    </li>
-                    <li>
-                      \( L_{n} \) is the lowest price observed over the last n periods.
-                    </li>
-                    <li>
-                      \( H_{n} \) is the highest price observed over the last n periods.
-                    </li>
-                  </ul>
+                The Stochastic Oscillator formula is given by:
+                <br>
+                <div>
+                    \( %K = \frac{{C - L_{14}}}{{H_{14} - L_{14}}} \times 100 \)
+                </div>
+                </p>
+
+                <h3>Where:</h3>
+                <ul>
+                <li>
+                    \( %K \) is the value of the Stochastic Oscillator at a given time.
+                </li>
+                <li>
+                    \( C \) is the most recent closing price of the asset.
+                </li>
+                <li>
+                    \( L_{14} \) is the lowest price observed over the last 14 periods.
+                </li>
+                <li>
+                    \( H_{14} \) is the highest price observed over the last 14 periods.
+                </li>
+                </ul>
             </div>
         </main>
         <footer>
