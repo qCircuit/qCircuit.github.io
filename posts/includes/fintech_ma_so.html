@@ -89,7 +89,7 @@ def get_moving_average(self):
                   The Stochastic Oscillator formula is given by:
                   <br>
                   <div>
-                    %K = <sup>(C - L<sub>14</sub>)</sup> / <sub>(H<sub>14</sub> - L<sub>14</sub>)</sub> * 100
+                    %K = <sup>(C - L<sub>n</sub>)</sup> / <sub>(H<sub>n</sub> - L<sub>n</sub>)</sub> * 100
                   </div>
                 </p>
                 
@@ -102,10 +102,10 @@ def get_moving_average(self):
                     C is the most recent closing price of the asset.
                   </li>
                   <li>
-                    L<sub>14</sub> is the lowest price observed over the last 14 periods.
+                    L<sub>n</sub> is the lowest price observed over the last 14 periods.
                   </li>
                   <li>
-                    H<sub>14</sub> is the highest price observed over the last 14 periods.
+                    H<sub>n</sub> is the highest price observed over the last 14 periods.
                   </li>
                 </ul>
 
