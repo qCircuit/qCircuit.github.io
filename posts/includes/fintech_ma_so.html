@@ -109,6 +109,37 @@ def get_moving_average(self):
                     \( H_{14} \) is the highest price observed over the last 14 periods.
                 </li>
                 </ul>
+
+                <p>Thus follows the basic calculation in python:</p>
+                <pre>
+                    <code>
+def get_stochastic_oscillator(self, period):
+    self.get_smooth()
+    
+    # calc components
+    current = self.data.smoothed_series.iloc[period:]
+    lowest = [self.data.smoothed_series.iloc[i-period:i+period].min() for i in range(period, len(self.data.smoothed_series))]
+    highest = [self.data.smoothed_series.iloc[i-period:i+period].max() for i in range(period, len(self.data.smoothed_series))]
+    nominator = [c-l for c,l in zip(current, lowest)]
+    denominator = [h-l for h,l in zip(highest, lowest)]
+
+    # get oscillator values
+    stochastic_oscillator = pd.Series(
+        [n/d for n,d in zip(nominator, denominator)],
+        name='stochastic_oscillator'
+    )
+
+    # add zeros to the incalculable start period
+    stochastic_oscillator = pd.concat([
+        pd.Series([0] * period),
+        stochastic_oscillator
+    ]).reset_index(drop=True)
+
+    self.data["stochastic_oscillator"] = stochastic_oscillator
+
+    return stochastic_oscillator
+                    </code>
+                </pre>
             </div>
         </main>
         <footer>
