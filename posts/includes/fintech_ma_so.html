@@ -84,28 +84,29 @@ def get_moving_average(self):
                 </pre>
                 <img src="../images/fintech_moving_average.png" alt="extrema" width="800px" height="300px">
                 <p>The Stochastic Oscillator is a popular momentum indicator used in technical analysis to assess the price momentum of a financial instrument, such as a stock, currency pair, or commodity. It helps traders and investors identify potential overbought and oversold conditions in the market, indicating possible trend reversals or corrections.</p>
+                <h2>Stochastic Oscillator Formula:</h2>
                 <p>
-                The Stochastic Oscillator formula is given by:
-                <br>
-                <div>
-                    <span class="math-tex">\( %K = \frac{{C - L_{14}}}{{H_{14} - L_{14}}} \times 100 \)</span>
-                </div>
+                  The Stochastic Oscillator formula is given by:
+                  <br>
+                  <div>
+                    %K = <sup>(C - L<sub>14</sub>)</sup> / <sub>(H<sub>14</sub> - L<sub>14</sub>)</sub> * 100
+                  </div>
                 </p>
-
+                
                 <h3>Where:</h3>
                 <ul>
-                <li>
-                    <span class="math-tex">\( %K \)</span> is the value of the Stochastic Oscillator at a given time.
-                </li>
-                <li>
-                    <span class="math-tex">\( C \)</span> is the most recent closing price of the asset.
-                </li>
-                <li>
-                    <span class="math-tex">\( L_{14} \)</span> is the lowest price observed over the last 14 periods.
-                </li>
-                <li>
-                    <span class="math-tex">\( H_{14} \)</span> is the highest price observed over the last 14 periods.
-                </li>
+                  <li>
+                    %K is the value of the Stochastic Oscillator at a given time.
+                  </li>
+                  <li>
+                    C is the most recent closing price of the asset.
+                  </li>
+                  <li>
+                    L<sub>14</sub> is the lowest price observed over the last 14 periods.
+                  </li>
+                  <li>
+                    H<sub>14</sub> is the highest price observed over the last 14 periods.
+                  </li>
                 </ul>
 
                 <p>Thus follows the basic calculation in python:</p>
