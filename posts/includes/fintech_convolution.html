@@ -61,7 +61,7 @@
             </div>
             <div align="justify" class="content">
                 <p>Finding the correct neural network architecture for your time series regression task is crucial because the architecture directly influences the model's ability to understand and capture the underlying patterns in the data. The right architecture ensures that the model can efficiently learn the relevant features and relationships within the time series data, leading to better predictive performance. The task requires experimentation, thus different architecture patterns will be test. The first in the series will be convolutional layers.</p>
-                <p>Prior to passing the data to the model it requires some preprocessing. In this case that would be extracting features / target values, data normalization and ajusting the shape. Data normalization accelerates training convergence by maintaining consistent gradients, prevents numerical instability caused by extreme values, and ensures fair treatment of features regardless of scale, leading to improved model performance and generalization. A standard tool might be [sklearn MinMaxScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html)</p>
+                <p>Prior to passing the data to the model it requires some preprocessing. In this case that would be extracting features / target values, data normalization and ajusting the shape. Data normalization accelerates training convergence by maintaining consistent gradients, prevents numerical instability caused by extreme values, and ensures fair treatment of features regardless of scale, leading to improved model performance and generalization. A standard tool might be (sklearn MinMaxScaler)[https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html]</p>
                 <pre>
                     <code>
 def get_xy(data):
@@ -196,7 +196,7 @@ def fit_convolution(data):
                 </pre>
                 <p>The resulting metrics on the test sample is: <strong>*test loss: 0.0005519497790373862, test acc: 0.02719767577946186*</strong>. The fit model process can be traced via the metrics history: </p>
 
-                <img src="../images/fintech_conv_history.png" alt="convolution history" width="650px" height="200px">
+                <img src="../images/fintech_conv_history.png" alt="convolution history" width="650px" height="450px">
                
             </div>
         </main>
