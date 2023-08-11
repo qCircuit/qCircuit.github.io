@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Posts</title>   
+        <style>
+            html body {
+                font-family: 'Roboto Mono', sans-serif;
+                background-color: white;
+            }
+            :root {
+                --accent: gray;
+                --border-width:  5px ;
+            }
+        </style>
+        <link rel="stylesheet" href="https://qCircuit.github.io/css/main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%20Mono">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <meta name="generator" content="Hugo 0.96.0" />
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand visible-xs" href="#">CV</a>
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                                <li><a href="../../index.html">Home</a></li>
+                                <li><a href="../../posts/index.html/">Posts</a></li>
+                                <li><a href="../../resume/index.html">Resume</a></li>
+                                <li><a href="../../learning/index.html">Learning Resources</a></li>
+                                <li><a href="../../courses/index.html">Education</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="navbar-icon"><a href="mailto:tensorflowq@gmail.com"><i class="fas fa-envelope"></i></a></li>
+                            <li class="navbar-icon"><a href="https://github.com/qCircuit/"><i class="fab fa-github"></i></a></li>
+                            <li class="navbar-icon"><a href="https://twitter.com/GlebKabanov/"><i class="fab fa-twitter"></i></a></li>
+                            <li class="navbar-icon"><a href="https://www.linkedin.com/in/Gleb-Kabanov"><i class="fab fa-linkedin"></i></a></li>
+                        </ul>
+                </div>
+            </div>
+        </nav>
+        <main>
+            <div>
+                <u><h2>Forecasting the close price of a financial asset: applying convolutional layers</h2></u>
+            </div>
+            <div align="justify" class="content">
+                <p>Finding the correct neural network architecture for your time series regression task is crucial because the architecture directly influences the model's ability to understand and capture the underlying patterns in the data. The right architecture ensures that the model can efficiently learn the relevant features and relationships within the time series data, leading to better predictive performance. The task requires experimentation, thus different architecture patterns will be test. The first in the series will be convolutional layers.</p>
+                <p>Prior to passing the data to the model it requires some preprocessing. In this case that would be extracting features / target values, data normalization and ajusting the shape. Data normalization accelerates training convergence by maintaining consistent gradients, prevents numerical instability caused by extreme values, and ensures fair treatment of features regardless of scale, leading to improved model performance and generalization. A standard tool might be [sklearn MinMaxScaler](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MinMaxScaler.html)</p>
+                <pre>
+                    <code>
+def get_xy(data):
+    x = data.drop(configur.target, axis=1)
+    y = data[configur.target]
+    util.logger.info(f"x shape: {x.shape}, y shape: {y.shape}")
+
+    return x,y
+
+def normalize_input(x, option="minmax"):
+    if option=="minmax":
+        scaler = MinMaxScaler()
+        x = scaler.fit_transform(x)
+    if option=="keras":
+        layer = tf.keras.layers.Normalization(axis=None)
+        layer.adapt(x)
+        x = layer(x)
+    
+    return x
+
+def split_data(x, y):
+    n = int(len(x) * configur.train_test_size)
+    xtr, xvl = x[:n, :], x[n:, :]
+    ytr, yvl = y[:n], y[n:]
+
+    util.logger.info(f"data splited, train/test shapes: {xtr.shape, ytr.shape}/{xvl.shape, yvl.shape}")
+    
+    return xtr, xvl, ytr, yvl
+
+def preprocess(data):
+    x,y = get_xy(data)
+    x = normalize_input(x)
+    xtr, xts, ytr, yts = split_data(x, y)
+    xtr = xtr.reshape(xtr.shape[0], xtr.shape[1], 1)
+    xts = xts.reshape(xts.shape[0], xts.shape[1], 1)
+
+    return xtr, xvl, ytr, yvl
+                    </code>
+                </pre>
+
+                <p>The model is designed for 1D input data and comprises multiple convolutional layers followed by batch normalization and rectified linear unit (ReLU) activation functions. Each convolutional layer has 128 filters with a kernel size of 3 and "same" padding to maintain input shape. After the convolutional layers, there's a Global Average Pooling layer that averages the features along the time dimension. The model concludes with a dense output layer with a single neuron and ReLU activation, suitable for regression tasks.</p>
+                <pre>
+                    <code>
+def make_convolution_model(input_shape):
+    input_layer = keras.layers.Input(shape=input_shape)
+
+    conv1 = keras.layers.Conv1D(filters=128, kernel_size=3, padding="same")(input_layer)
+    conv1 = keras.layers.BatchNormalization()(conv1)
+    conv1 = keras.layers.ReLU()(conv1)
+
+    conv2 = keras.layers.Conv1D(filters=128, kernel_size=3, padding="same")(conv1)
+    conv2 = keras.layers.BatchNormalization()(conv2)
+    conv2 = keras.layers.ReLU()(conv2)
+
+    conv3 = keras.layers.Conv1D(filters=128, kernel_size=3, padding="same")(conv2)
+    conv3 = keras.layers.BatchNormalization()(conv3)
+    conv3 = keras.layers.ReLU()(conv3)
+
+    gap = keras.layers.GlobalAveragePooling1D()(conv3)
+
+    output_layer = keras.layers.Dense(1, activation="relu")(gap)
+
+    return keras.models.Model(inputs=input_layer, outputs=output_layer)
+                    </code>
+                </pre>
+
+                <p>Within the model fitting process several callbakcs are applied:</p>
+                <ul>
+                    <li>ModelCheckpoint: saves the best model weights based on validation loss. This is extremely useful because it enables you to restore the model to its best state if training is interrupted or if overfitting occurs</li>
+                    <li>ReduceLROnPlateau: dynamically adjusts the learning rate of the optimizer when a plateau in validation loss is detected</li>
+                    <li>EarlyStopping: monitors a specific metric (usually validation loss) and stops the training if the metric doesn't improve for a given number of epochs (patience=20 in this code).</li>
+                </ul>
+                
+                <pre>
+                    <code>
+def fit_convolution(data):
+    st = time.time()
+    util.logger.info(f"start fitting convolution model")
+
+    x,y = get_xy(data)
+    x = normalize_input(x)
+    xtr, xts, ytr, yts = split_data(x, y)
+    xtr = xtr.reshape(xtr.shape[0], xtr.shape[1], 1)
+    xts = xts.reshape(xts.shape[0], xts.shape[1], 1)
+
+    model = make_convolution_model(xtr.shape[1:])
+
+    callbacks = [
+        keras.callbacks.ModelCheckpoint(
+            "models/conv_model.h5", save_best_only=True, monitor="val_loss"
+        ),
+        keras.callbacks.ReduceLROnPlateau(
+        monitor="val_loss", patience=20, factor=0.1,min_lr = 0.0001
+        ),
+        keras.callbacks.EarlyStopping(monitor="val_loss", patience=20)
+    ]
+
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=0.001),
+        loss=keras.losses.Huber(delta=1.0),
+        metrics=["mean_absolute_error"]
+    )
+
+    history = model.fit(
+        xtr, ytr,
+        batch_size=configur.batch_size,
+        epochs = configur.epochs,
+        callbacks = callbacks,
+        validation_split=0.2,
+        verbose=1
+    )
+
+    # test
+    test_loss, test_acc = model.evaluate(xts, yts)
+    util.logger.info(f"test loss: {test_loss}, test acc: {test_acc}")
+
+    # plot hisotry 
+    metric = "mean_absolute_error"
+    plt.figure()
+    plt.plot(history.history[metric])
+    plt.plot(history.history["val_" + metric])
+    plt.title("model " + metric)
+    plt.ylabel(metric, fontsize="large")
+    plt.xlabel("epoch", fontsize="large")
+    plt.legend(["train", "val"], loc="best")
+    plt.show()
+
+    util.logger.info(f"end fitting convolution model, time: {time.time() - st}")
+
+    return model, history
+                    </code>
+                </pre>
+                <p>The resulting metrics on the test sample is: <strong>*test loss: 0.0005519497790373862, test acc: 0.02719767577946186*</strong>. The fit model process can be traced via the metrics history: </p>
+
+                <img src="../images/fintech_conv_history.png" alt="convolution history" width="650px" height="200px">
+               
+            </div>
+        </main>
+        <footer>
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/calintat/minimal">Minimal</a>.</p>
+        </footer>
+    </body>
+
+</html>
