@@ -61,10 +61,8 @@
             </div>
             <div align="justify" class="content">
                 <p>One of the common machine learning problems is clustering. This is an unsupervised task ususally performed to identify patterns and group similar data points within a dataset. For example, one might be interested in getting the segments within a number of goods. A possible approach might be extracting segments based on their names or description. There might be different tools for this task and a sentence tansformer is one of them.</p>
-                <p>The SentenceTransformer is a Python library designed to generate numerical representations (embeddings) for sentences and text passages. It utilizes pre-trained models that have been fine-tuned on a wide range of language understanding tasks, such as sentence similarity, text classification, and more. These models are capable of transforming input sentences into fixed-length vectors in a semantic space, where similar sentences have similar vector representations. The pre-trained model might be collected from [Hugging Face resource](https://huggingface.co/sentence-transformers/distiluse-base-multilingual-cased-v2).</p>
-
-
-                
+                <p>The SentenceTransformer is a Python library designed to generate numerical representations (embeddings) for sentences and text passages. It utilizes pre-trained models that have been fine-tuned on a wide range of language understanding tasks, such as sentence similarity, text classification, and more. These models are capable of transforming input sentences into fixed-length vectors in a semantic space, where similar sentences have similar vector representations. The pre-trained model might be collected from <a href="https://huggingface.co/sentence-transformers/distiluse-base-multilingual-cased-v2">Hugging Face resource.</a></p>
+             
                 <pre>
                     <code>
 from sentence_transformers import SentenceTransformer, util
@@ -75,7 +73,7 @@ embeddings = model.encode(df["nmae"].values, convert_to_tensor=True)
                     </code>
                 </pre>
 
-                <p>The next step is to apply (t-SNE)[https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html] to reduce dimensions of the embeddings.</p>
+                <p>The next step is to apply <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html">t-SNE</a> to reduce dimensions of the embeddings.</p>
                 <pre>
                     <code>
 tsne = TSNE(n_components=2, random_state=42)
@@ -90,7 +88,7 @@ plt.show()
 
                 <p>The result is the 2D representation of the embeddings space:</p>
                 <img src="../images/clustering_goods_tsne.png" alt="t-SNE" width="650px" height="450px">
-                <p>The final step is applying [DBSCAN](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html) to extract clusters. One point to mention is the *eps* parameter, "the maximum distance between two samples for one to be considered as in the neighborhood of the other.". By varying this parameters you can empirically identify the number of clusters.</p>
+                <p>The final step is applying <a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html">DBSCAN</a> to extract clusters. One point to mention is the *eps* parameter, "the maximum distance between two samples for one to be considered as in the neighborhood of the other". By varying this parameters you can empirically identify the number of clusters.</p>
                 
                 <pre>
                     <code>
