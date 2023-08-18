@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Posts</title>   
+        <style>
+            html body {
+                font-family: 'Roboto Mono', sans-serif;
+                background-color: white;
+            }
+            :root {
+                --accent: gray;
+                --border-width:  5px ;
+            }
+        </style>
+        <link rel="stylesheet" href="https://qCircuit.github.io/css/main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%20Mono">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"> 
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script>$(document).on('click', function() { $('.collapse').collapse('hide'); })</script>
+        <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <meta name="generator" content="Hugo 0.96.0" />
+    </head>
+    <body>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand visible-xs" href="#">CV</a>
+                    <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                                <li><a href="../../index.html">Home</a></li>
+                                <li><a href="../../posts/index.html/">Posts</a></li>
+                                <li><a href="../../resume/index.html">Resume</a></li>
+                                <li><a href="../../learning/index.html">Learning Resources</a></li>
+                                <li><a href="../../courses/index.html">Education</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="navbar-icon"><a href="mailto:tensorflowq@gmail.com"><i class="fas fa-envelope"></i></a></li>
+                            <li class="navbar-icon"><a href="https://github.com/qCircuit/"><i class="fab fa-github"></i></a></li>
+                            <li class="navbar-icon"><a href="https://twitter.com/GlebKabanov/"><i class="fab fa-twitter"></i></a></li>
+                            <li class="navbar-icon"><a href="https://www.linkedin.com/in/Gleb-Kabanov"><i class="fab fa-linkedin"></i></a></li>
+                        </ul>
+                </div>
+            </div>
+        </nav>
+        <main>
+            <div>
+                <u><h2>Clustering goods: keywords</h2></u>
+            </div>
+            <div align="justify" class="content">
+                <p>Another approach on good clustering might be extracting keywords aout of the goods' names or description.</p>
+                <p>install any packages if needed:</a></p>
+             
+                <pre>
+                    <code>
+!pip install -U spacy
+!python -m spacy download en_core_web_sm
+!python -m spacy download ru_core_news_md
+
+!pip install pymorphy2
+                    </code>
+                </pre>
+
+                <p>Import the required libraries:</p>
+                <pre>
+                    <code>
+import pandas as pd
+import re
+import spacy
+from string import punctuation
+import pymorphy2
+
+# load the language package required
+nlp = spacy.load('ru_core_news_md')
+                    </code>
+                </pre>
+
+                <p>Read the dataset:</p>
+                <pre>
+                    <code>
+# read and sample the dataset
+dataset = pd.read_csv("data/dataset.csv", delimiter=";")
+
+# sample the dataset by category id(time saving purpose)
+catId = dataset.categoryId.sample(1).values[0]
+df = dataset[dataset.categoryId == catId].reset_index(drop=True)
+                    </code>
+                </pre>
+
+                <p>The idea behing the words extraction is to generalize the naming of a good by getting all the nouns and adjectives and dropping the following elements:
+                    - common words with little meaningful information,
+                    - punctuation symbols,
+                    - too short tokens, that is likely to be abbreviations,
+                    - tokens containing numbers (like '13un.')
+                    - proper nouns and tokens without specific tag
+                    
+                    This operation can be performed with <a href="https://spacy.io/">spacy</a></p>
+                
+                <pre>
+                    <code>
+def contains_number(input_string):
+    return bool(re.search(r'\d', input_string))
+
+def extract_keywords(text, nlp):
+
+    doc = nlp(text)
+    keywords = []
+
+    for token in doc:
+        if token.text in nlp.Defaults.stop_words:
+            continue
+        elif token.text in punctuation:
+            continue
+        elif len(token.text) < 3:
+            continue
+        elif contains_number(token.text) == True:
+            continue
+        elif token.pos_ in ["PROPN", 'X']:
+            continue
+        elif token.pos_ in ["NOUN", "ADJ"] or token.ent_type_:
+            keywords.append(token.text.lower())
+
+    return keywords
+
+COLUMN = "name"
+df["keywords"] = df[COLUMN].apply(extract_keywords, nlp=nlp)
+df["keywords"].head()
+                    </code>
+                </pre>
+                <p>A useful operation is normalizing words by lemmatization, ensuring that different grammatical forms of a word are reduced to a common base form. A tool for this procedure is <a href="https://pypi.org/project/pymorphy2/">pymorphy2</a></p>
+                <pre>
+                    <code>
+morph = pymorphy2.MorphAnalyzer()
+
+df.keywords = df.keywords.apply(lambda v: [morph.parse(w)[0].normal_form for w in v])
+df.keywords.head()
+                    </code>
+                </pre>
+                <p>As the output we get the feature 'keywords' that can be used as the key to group the goods by the keywords:</p>
+                <pre>
+                    <code>
+print(f"number of goods: {len(df)}")
+print(f"number of groups: {df.keywords.astype(str).nunique()}")
+                    </code>
+                </pre>
+            </div>
+        </main>
+        <footer>
+            <p class="copyright text-muted">© All rights reserved. Powered by <a href="https://gohugo.io">Hugo</a> and <a href="https://github.com/calintat/minimal">Minimal</a>.</p>
+        </footer>
+    </body>
+
+</html>
