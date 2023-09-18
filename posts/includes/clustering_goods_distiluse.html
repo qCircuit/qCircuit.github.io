@@ -69,7 +69,7 @@ from sentence_transformers import SentenceTransformer, util
 # initiate the model
 model =  SentenceTransformer('sentence-transformers/distiluse-base-multilingual-cased-v2')
 # transform goods' title into embeddings
-embeddings = model.encode(df["nmae"].values, convert_to_tensor=True)
+embeddings = model.encode(df["name"].values, convert_to_tensor=True)
                     </code>
                 </pre>
 
