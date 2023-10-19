@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Learning Resources</title>   
+        <title>Posts</title>   
         <style>
             html body {
                 font-family: 'Roboto Mono', sans-serif;
@@ -40,11 +40,11 @@
                 </div>
                 <div class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
-                                <li><a href="../index.html">Home</a></li>
-                                <li><a href="../posts/index.html">Posts</a></li>
-                                <li><a href="../resume/index.html">Resume</a></li>
-                                <li><a href="../learning/index.html">Learning Resources</a></li>
-                                <li><a href="../courses/index.html">Education</a></li>
+                                <li><a href="../../index.html">Home</a></li>
+                                <li><a href="../../posts/index.html">Posts</a></li>
+                                <li><a href="../../resume/index.html">Resume</a></li>
+                                <li><a href="../../learning/index.html">Learning Resources</a></li>
+                                <li><a href="../../courses/index.html">Education</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li class="navbar-icon"><a href="mailto:tensorflowq@gmail.com"><i class="fas fa-envelope"></i></a></li>
@@ -57,20 +57,57 @@
         </nav>
         <main>
             <div>
-                <u><h1>Resume</h1></u>
+                <u><h2>Forecasting the close price of a financial asset: LSTM NN</h2></u>
             </div>
-            <div align="start" class="content">
-                <h3 id="fintech">FinTech:</h3>
-                <ul>
-                    <li><a href="includes/clustering_goods_keywords.html">2023-09-18, Clustering goods: LSTM model</a></li>
-                    <li><a href="includes/clustering_goods_keywords.html">2023-08-18, Clustering goods: keywords</a></li>
-                    <li><a href="includes/clustering_goods_distiluse.html">2023-08-13, Clustering goods: applying sentence transformers</a></li>
-                    <li><a href="includes/fintech_convolution.html">2023-08-07, Forecasting the close price of a financial asset: applying convolutional layers</a></li>
-                    <li><a href="includes/fintech_ma_so.html">2023-07-30, Forecasting the close price of a financial asset: moving averages and stochastic oscillator</a></li>
-                    <li><a href="includes/fintech_support_resistance.html">2023-07-30, Forecasting the close price of a financial asset: support and resitance lines</a></li>               
-                    
-                </ul>
- 
+            <div align="justify" class="content">
+                <p>Long Short-Term Memory (LSTM) is a type of recurrent neural network (RNN) architecture that is particularly well-suited for time series modeling and sequential data analysis. LSTMs are designed to handle sequences of data with long-range dependencies. They can capture patterns and relationships in time series data over extended periods, which is essential for many time series forecasting tasks.
+                LSTMs have an internal memory cell that can store information over time. This memory cell allows them to remember and utilize information from previous time steps, making them effective at modeling temporal dependencies in data.</p>
+                <p></p>
+             
+                <pre>
+                    <code>
+from sentence_transformers import SentenceTransformer, util
+# initiate the model
+model =  SentenceTransformer('sentence-transformers/distiluse-base-multilingual-cased-v2')
+# transform goods' title into embeddings    
+embeddings = model.encode(df["name"].values, convert_to_tensor=True)
+                    </code>
+                </pre>
+
+                <p>The next step is to apply <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html">t-SNE</a> to reduce dimensions of the embeddings.</p>
+                <pre>
+                    <code>
+tsne = TSNE(n_components=2, random_state=42)
+x = tsne.fit_transform(embeddings)
+print(x.shape)
+
+plt.figure(figsize=(10, 8))
+plt.scatter(x[:, 0], x[:, 1])
+plt.show()
+                    </code>
+                </pre>
+
+                <p>The result is the 2D representation of the embeddings space:</p>
+                <img src="../images/clustering_goods_tsne.png" alt="t-SNE" width="650px" height="450px">
+                <p>The final step is applying <a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html">DBSCAN</a> to extract clusters. One point to mention is the *eps* parameter, "the maximum distance between two samples for one to be considered as in the neighborhood of the other". By varying this parameters you can empirically identify the number of clusters.</p>
+                
+                <pre>
+                    <code>
+dbscan = DBSCAN(eps=2.3, min_samples=5)
+labels = dbscan.fit_predict(x)
+print(labels.shape, len(set(labels)))
+df["group"] = labels
+
+plt.figure(figsize=(17, 10))
+plt.scatter(x[:, 0], x[:, 1], c=labels, cmap=plt.cm.get_cmap("viridis", np.max(labels) + 1), s=50)
+plt.title("DBSCAN Clustering")
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.show()
+                    </code>
+                </pre>
+                <img src="../images/clustering_goods_hdbscan.png" alt="dbscan" width="650px" height="450px">
+               
             </div>
         </main>
         <footer>
